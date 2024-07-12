@@ -9,9 +9,8 @@ from rich import progress
 
 
 def split_txt_cropus_to_chunk_data(
-    texts: list, batch_size: int = 512**2, max_len: int = 512, window_size: int = 2
+        texts: list, batch_size: int = 512 ** 2, max_len: int = 512, window_size: int = 2
 ) -> list:
-
     buffer, buffer_len = [], 0
     chunk_data = []
 
@@ -24,8 +23,7 @@ def split_txt_cropus_to_chunk_data(
 
             # - window_size为滑动窗口，这样每个窗口都包含有window_size个上文
             for i in range(0, len(buffer_txt), max_len - window_size):
-
-                chunk_data.append("".join(buffer_txt[i : i + max_len]))
+                chunk_data.append("".join(buffer_txt[i: i + max_len]))
 
             buffer, buffer_len = [], 0
 
@@ -118,7 +116,7 @@ def gen_baike(origin_file):
                 n, i = len(temp_txt), max_len
                 while i < n and temp_txt[i] not in ("。", "！"):
                     i += 1
-                temp_txt = "".join(temp_txt[0 : i + 1])
+                temp_txt = "".join(temp_txt[0: i + 1])
 
                 # 添加 eos token
             temp_txt = f"{temp_txt}{eos_token}"
@@ -126,7 +124,6 @@ def gen_baike(origin_file):
             baike_items.append(temp_txt)
 
             if len(baike_items) % batch_size == 0:
-
                 chunk_data = split_txt_cropus_to_chunk_data(baike_items)
                 tb = pa.Table.from_arrays([chunk_data], names=["text"])
 
@@ -242,10 +239,10 @@ def gen_bell():
 
             # 收集测试数据
             if (
-                len(txt) >= max_len
-                and len(txt) < max_len + 8
-                and len(eval_data) < eval_size
-                and np.random.rand() <= 0.12
+                    len(txt) >= max_len
+                    and len(txt) < max_len + 8
+                    and len(eval_data) < eval_size
+                    and np.random.rand() <= 0.12
             ):
                 eval_data.append(txt)
                 continue
@@ -268,10 +265,10 @@ def gen_bell():
 
                 # 收集测试数据
                 if (
-                    len(txt) >= max_len
-                    and len(txt) < max_len + 8
-                    and len(eval_data) < eval_size
-                    and np.random.rand() > 0.75
+                        len(txt) >= max_len
+                        and len(txt) < max_len + 8
+                        and len(eval_data) < eval_size
+                        and np.random.rand() > 0.75
                 ):
                     eval_data.append(txt)
                     continue
@@ -339,13 +336,16 @@ def gen_aplca_sft(origin_file, output_file):
 
 
 # Pretrain using WIKI and baidu baike
+# gen_wiki_filter(
+#     "/data/MINI_LLM_data/wikipedia-cn-20230720-filtered/wikipedia-cn-20230720-filtered.json"
+# )
 gen_wiki_filter(
-    "/data/MINI_LLM_data/wikipedia-cn-20230720-filtered/wikipedia-cn-20230720-filtered.json"
+    "/mnt/data/_tt_/LLM_Train_Data/wikipedia-cn-20230720-filtered.json"
 )
 # 这里的563w_baidubaike要记得解压. 原本download的是7z压缩文件》
-gen_baike("/data/MINI_LLM_data/563w_baidubaike.json")
+# gen_baike("/data/MINI_LLM_data/563w_baidubaike.json")
+gen_baike("/mnt/data/_tt_/LLM_Train_Data/563w_baidubaike.json")
 gen_bell()  # To generate the eval dataset
-
 
 # 原本的gen_sky 需要复制多个，没办法读取一个文件夹. 新的gen_sky只需要输入文件夹和输出文件夹的路径即可。并且原本的也会自动修改为.parquet结尾.（喵德注释）
 # gen_sky_for_folder("/home/miaode/MINI_LLM/data/SkyPile-150B/data_folder","/home/miaode/MINI_LLM/datasets" )
