@@ -26,7 +26,6 @@ from qwen.tokenization_qwen import QWenTokenizer
 # %%
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
-
 attn_implementation = "flash_attention_2"
 try:
     from flash_attn import flash_attn_func
@@ -37,34 +36,36 @@ except Exception as e:
 # # 1. 训练数据来源
 
 TRAIN_FILES = [
-    # './datasets/wiki_fi.parquet',
-    # './datasets/baike_chunk_512_5.6M_0.parquet',
-    #     './datasets/baike_chunk_512_5.6M_1.parquet',
-    #     './datasets/sky1.parquet',
-    "./datasets/sky2.parquet",
-    "./datasets/sky3.parquet",
-    "./datasets/sky4.parquet",
-    "./datasets/sky5.parquet",
-    "./datasets/sky6.parquet",
-    "./datasets/sky7.parquet",
-    "./datasets/sky8.parquet",
-    "./datasets/sky9.parquet",
-    "./datasets/sky10.parquet",
-    "./datasets/sky11.parquet",
-    "./datasets/sky12.parquet",
-    "./datasets/sky13.parquet",
-    "./datasets/sky14.parquet",
-    "./datasets/sky15.parquet",
-    "./datasets/sky16.parquet",
-    "./datasets/sky17.parquet",
-    "./datasets/sky18.parquet",
-    "./datasets/sky19.parquet",
-    "./datasets/sky20.parquet",  #     './datasets/sky10.parquet',
+    './datasets/wiki_fi.parquet',
+    './datasets/baike_chunk_512_5.6M_0.parquet',
+    './datasets/baike_chunk_512_5.6M_1.parquet',
+    # './datasets/sky1.parquet',
+    # "./datasets/sky2.parquet",
+    # "./datasets/sky3.parquet",
+    # "./datasets/sky4.parquet",
+    # "./datasets/sky5.parquet",
+    # "./datasets/sky6.parquet",
+    # "./datasets/sky7.parquet",
+    # "./datasets/sky8.parquet",
+    # "./datasets/sky9.parquet",
+    # "./datasets/sky10.parquet",
+    # "./datasets/sky11.parquet",
+    # "./datasets/sky12.parquet",
+    # "./datasets/sky13.parquet",
+    # "./datasets/sky14.parquet",
+    # "./datasets/sky15.parquet",
+    # "./datasets/sky16.parquet",
+    # "./datasets/sky17.parquet",
+    # "./datasets/sky18.parquet",
+    # "./datasets/sky19.parquet",
+    # "./datasets/sky20.parquet",
+    # './datasets/sky10.parquet',
     #     './datasets/mbvc1.parquet',
     #     './datasets/sky1.parquet',
 ]
 
 EVAL_FILE = "./datasets/pretrain_eval_512_1w.parquet"
+
 
 # %%
 
@@ -112,7 +113,6 @@ map_dtype = np.uint16 if vocab_size < 65535 else np.uint32
 
 
 def token_to_id(samples: dict) -> dict:
-
     batch_txt = samples["text"]
     outputs = tokenizer(
         batch_txt,
@@ -169,13 +169,13 @@ data_collator = DataCollatorForLanguageModeling(tokenizer, mlm=False)
 if pretrain_args.attn_implementation == "flash_attention_2":
     torch.set_default_dtype(torch.bfloat16)
 
-
 config = QWenConfig.from_pretrained("./qwen")
 # model = QWenLMHeadModel.from_pretrained("./1")
 model = QWenLMHeadModel(config)
 
 model_size = sum(t.numel() for t in model.parameters())
-print(f"QWen size: {model_size / 1000**2:.1f}M parameters")
+print(f"QWen size: {model_size / 1000 ** 2:.1f}M parameters")
+
 
 # %% [markdown]
 # # 6. cuda cache回调函数
@@ -186,11 +186,11 @@ class MyTrainerCallback(TrainerCallback):
     log_cnt = 0
 
     def on_log(
-        self,
-        args: TrainingArguments,
-        state: TrainerState,
-        control: TrainerControl,
-        **kwargs,
+            self,
+            args: TrainingArguments,
+            state: TrainerState,
+            control: TrainerControl,
+            **kwargs,
     ):
         """
         在打印 n 次日志后清除cuda缓存，适合低显存设备，能防止OOM
@@ -200,11 +200,11 @@ class MyTrainerCallback(TrainerCallback):
             torch.cuda.empty_cache()
 
     def on_epoch_end(
-        self,
-        args: TrainingArguments,
-        state: TrainerState,
-        control: TrainerControl,
-        **kwargs,
+            self,
+            args: TrainingArguments,
+            state: TrainerState,
+            control: TrainerControl,
+            **kwargs,
     ):
         """
         在on_epoch_end时保存一次模型。
@@ -262,7 +262,7 @@ trainer = Trainer(
 # `resume_from_checkpoint=True`参数可以从上次保存的检查点继续训练
 
 # %%
-trainer.train(  #'model_save/pre/checkpoint-3400'
+trainer.train(  # 'model_save/pre/checkpoint-3400'
     # resume_from_checkpoint=True
 )
 
