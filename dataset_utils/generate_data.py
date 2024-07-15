@@ -222,8 +222,8 @@ def gen_bell():
     eval_data = []
     eval_size = 10000
     max_len = 512
-    root = "/data/MINI_LLM_data"
-    with open(root + "/train_3.5M_CN/train_3.5M_CN.json", "r", encoding="utf-8") as f:
+    root = "/mnt/data/_tt_/LLM_Train_Data"
+    with open(root + "/train_3.5M_CN.json", "r", encoding="utf-8") as f:
         for line in f:
             item = ujson.loads(line)
 
@@ -251,8 +251,8 @@ def gen_bell():
                 continue
             train_data.append(txt)
     for file in [
-        root + "/train_2M_CN/train_2M_CN.json",
-        root + "/train_1M_CN/Belle_open_source_1M.json",
+        root + "/train_2M_CN.json",
+        root + "/Belle_open_source_1M.json",
     ]:
         with open(file, "r", encoding="utf-8") as f:
             for line in f:
